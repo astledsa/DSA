@@ -456,10 +456,11 @@ Cursor* leaf_node_find (Table* table, uint32_t page_num, uint32_t key) {
 
     uint32_t min_index = 0;
     uint32_t one_past_max_index = num_cells;
-
+    
     while(one_past_max_index != min_index) {
         uint32_t index = (one_past_max_index + min_index) / 2;
         uint32_t key_at_index = *leaf_node_key(node, index);
+
         if (key == key_at_index) {
             cursor->cell_num = index;
             return cursor;
@@ -624,13 +625,13 @@ void db_close (Table* table) {
         printf("Error closing db file.\n");
         exit(EXIT_FAILURE);
     }
-    for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++) {
-        void* page = pager->pages[i];
-        if (page) {
-            free(page);
-            pager->pages[i] = NULL;
-        }
-    }
+    // for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++) {
+    //     void* page = pager->pages[i];
+    //     if (page) {
+    //         free(page);
+    //         pager->pages[i] = NULL;
+    //     }
+    // }
 
     free(pager);
     free(table);
@@ -681,6 +682,7 @@ void print_constants () {
     printf("ROW_SIZE: %d\n", ROW_SIZE);
     printf("COMMON_NODE_HEADER_SIZE: %d\n", COMMON_NODE_HEADER_SIZE);
     printf("LEAF_NODE_HEADER_SIZE: %d\n", LEAF_NODE_HEADER_SIZE);
+    printf("LEAF_NODE_NUM_CELL_SIZE: %d\n", LEAF_NODE_NUM_CELL_SIZE);
     printf("LEAF_NODE_CELL_SIZE: %d\n", LEAF_NODE_CELL_SIZE);
     printf("LEAF_NODE_SPACE_FOR_CELLS: %d\n", LEAF_NODE_SPACE_FOR_CELLS);
     printf("LEAF_NODE_MAX_CELLS: %d\n", LEAF_NODE_MAX_CELLS);
@@ -808,7 +810,7 @@ void leaf_node_insert (Cursor* cursor, uint32_t key, Row* value) {
 
     if (cursor->cell_num < num_cells) {
         for (uint32_t i = num_cells; i > cursor->cell_num; i--) {
-            memcpy(leaf_node_cell(node, i), leaf_node_cell(node, -1), LEAF_NODE_CELL_SIZE);
+            memcpy(leaf_node_cell(node, i), leaf_node_cell(node, i-1), LEAF_NODE_CELL_SIZE);
         }
     }
 
@@ -825,7 +827,6 @@ ExecutableResult execute_insert (Statement* statement, Table* table) {
     Row* row_to_insert = &(statement->row_to_insert);
     uint32_t key_to_insert = row_to_insert->id;
     Cursor* cursor = table_find(table, key_to_insert);
-    leaf_node_insert(cursor, row_to_insert->id, row_to_insert);
 
     if (cursor->cell_num < num_cells) {
         uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
@@ -833,6 +834,8 @@ ExecutableResult execute_insert (Statement* statement, Table* table) {
             return EXECUTE_DUPLICATE_KEY;
         }
     }
+
+    leaf_node_insert(cursor, row_to_insert->id, row_to_insert);
 
     free(cursor);
     return EXECUTE_SUCCESS;
@@ -863,6 +866,8 @@ void print_prompt () {
     printf("db > ");
 } 
 
+ssize_t getline (char **lineptr, size_t *n, FILE *stream);
+
 void read_input (InputBuffer* input_buffer) {
     ssize_t byte_read = getline(&(input_buffer->buffer), &(input_buffer->buffer_length), stdin);
 
@@ -879,8 +884,6 @@ void close_input_buffer (InputBuffer* input_buffer) {
     free(input_buffer->buffer);
     free(input_buffer);
 }
-
-ssize_t getline (char **lineptr, size_t *n, FILE *stream);
 
 int main (int argc, char* argv []) {
     if (argc < 2) {
