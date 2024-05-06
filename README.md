@@ -1,4 +1,5 @@
 # Data Structures
 
-## Structure:
-## Resource: 
+
+**Structure**: 
+**Resource:** 
