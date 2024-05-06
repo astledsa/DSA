@@ -1,5 +1,5 @@
 # Data Structures
 
 
-**Structure**: 
+**Structure**: <br>
 **Resource:** 
