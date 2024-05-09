@@ -13,5 +13,5 @@
 **Resource:** [Wikipedia](https://en.wikipedia.org/wiki/Skip_list)
 
 **Structure**: Algebraic Graph <br>
-**Resource:** [Paper]([https://en.wikipedia.org/wiki/Skip_list](https://eprints.ncl.ac.uk/file_store/production/239461/EF82F5FE-66E3-4F64-A1AC-A366D1961738.pdf))
+**Resource:** [Paper](https://en.wikipedia.org/wiki/Skip_list](https://eprints.ncl.ac.uk/file_store/production/239461/EF82F5FE-66E3-4F64-A1AC-A366D1961738.pdf)
 
