@@ -15,3 +15,5 @@
 **Structure**: Algebraic Graph <br>
 **Resource:** [Paper](https://eprints.ncl.ac.uk/file_store/production/239461/EF82F5FE-66E3-4F64-A1AC-A366D1961738.pdf)
 
+**Structure**: Tensors <br>
+**Resource:** [Blog](https://okarthikb.github.io/blog/rmad.html)
