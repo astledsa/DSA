@@ -12,6 +12,7 @@ typedef struct GradNode {
 
 typedef struct Tensor{
     double value;
+    double power;
     double gradient;
     char* creation_operation;
     GradNode* backward_grads;
@@ -57,6 +58,7 @@ Tensor* tensor (double number) {
 
     new_tensor->value = number;
     new_tensor->gradient = 1.0f;
+    new_tensor->power = 1.0f;
     new_tensor->parents[0] = NULL; 
     new_tensor->parents[1] = NULL; 
     new_tensor->backward_grads = NULL;
@@ -79,6 +81,14 @@ Tensor* ElementryOperations (Tensor* a, Tensor* b, char* operation) {
         new_tensor->value = a->value - b->value;
         return new_tensor;
     }
+    if (strcmp(operation, "div") == 0) {
+        if (b->value == 0.0f) {
+            printf("Division by zero");
+            return;
+        }
+        new_tensor->value = a->value / b->value;
+        return new_tensor;
+    }
     if (strcmp(operation, "mult") == 0) {
         new_tensor->value = a->value * b->value;
         return new_tensor;
@@ -97,6 +107,10 @@ Tensor* Sub (Tensor* a, Tensor* b) {
 
 Tensor* Mult (Tensor* a, Tensor* b) {
     return ElementryOperations(a, b, "mult");
+}
+
+Tensor* Div (Tensor* a, Tensor* b) {
+    return ElementryOperations(a, b, "div");
 }
 
 Tensor* Sin (Tensor* a) {
@@ -119,6 +133,15 @@ Tensor* Log (Tensor* a) {
     Tensor* new_tensor = tensor(log(a->value));
     new_tensor->creation_operation = "log";
     new_tensor->parents[0] = a;
+
+    return new_tensor;
+}
+
+Tensor* Power (Tensor* a, double power) {
+    Tensor* new_tensor = tensor(pow(a->value, power));
+    new_tensor->creation_operation = "pow";
+    new_tensor->parents[0] = a;
+    new_tensor->power = power;
 
     return new_tensor;
 }
@@ -152,6 +175,15 @@ void Backward (Tensor* z, double backward_gradient) {
         Backward(z->parents[1], z->gradient * (z->parents[0]->value));
     }
 
+    if (strcmp(z->creation_operation, "div") == 0) {
+        if (z->parents[1]->value == 0) {
+            printf("Division by zero");
+            return;
+        }
+        Backward(z->parents[0], z->gradient * (1/z->parents[1]->value));
+        Backward(z->parents[1], z->gradient * (-(z->parents[0]->value/pow(z->parents[1]->value, 2.0f))));
+    }
+
     if (strcmp(z->creation_operation, "sin") == 0) {
         Backward(z->parents[0], z->gradient * (cos(z->parents[0]->value)));
     }
@@ -166,6 +198,10 @@ void Backward (Tensor* z, double backward_gradient) {
             return;
         } 
         Backward(z->parents[0], z->gradient * (1/(z->parents[0]->value)));
+    }
+
+    if (strcmp(z->creation_operation, "pow") == 0) {
+        Backward(z->parents[0], z->gradient * (z->power * pow(z->parents[0]->value, z->power-1.0f)));
     }
 }
 
