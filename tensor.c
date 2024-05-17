@@ -67,7 +67,7 @@ Tensor* tensor (double number) {
     return new_tensor;
 }
 
-Tensor* ElementryOperations (Tensor* a, Tensor* b, char* operation) {
+Tensor* binaryOperations (Tensor* a, Tensor* b, char* operation) {
     Tensor* new_tensor = tensor(0);
     new_tensor->creation_operation = operation;
     new_tensor->parents[0] = a;
@@ -97,44 +97,51 @@ Tensor* ElementryOperations (Tensor* a, Tensor* b, char* operation) {
     return NULL;
 }
 
+Tensor* unaryOperations (Tensor* a, char* operation) {
+    Tensor* new_tensor = tensor(0);
+    new_tensor->creation_operation = operation;
+    new_tensor->parents[0] = a;
+
+    if (strcmp(operation, "sin") == 0) {
+        new_tensor->value = sin(a->value);
+        return new_tensor;
+    }
+    if (strcmp(operation, "cos") == 0) {
+        new_tensor->value = cos(a->value);
+        return new_tensor;
+    }
+    if (strcmp(operation, "log") == 0) {
+        new_tensor->value = log(a->value);
+        return new_tensor;
+    }
+}
+
 Tensor* Add (Tensor* a, Tensor* b) {
-    return ElementryOperations(a, b, "add");
+    return binaryOperations(a, b, "add");
 }
 
 Tensor* Sub (Tensor* a, Tensor* b) {
-    return ElementryOperations(a, b, "sub");
+    return binaryOperations(a, b, "sub");
 }
 
 Tensor* Mult (Tensor* a, Tensor* b) {
-    return ElementryOperations(a, b, "mult");
+    return binaryOperations(a, b, "mult");
 }
 
 Tensor* Div (Tensor* a, Tensor* b) {
-    return ElementryOperations(a, b, "div");
+    return binaryOperations(a, b, "div");
 }
 
 Tensor* Sin (Tensor* a) {
-    Tensor* new_tensor = tensor(sin(a->value));
-    new_tensor->creation_operation = "sin";
-    new_tensor->parents[0] = a;
-
-    return new_tensor;
+    return unaryOperations(a, "sin");
 }
 
 Tensor* Cos (Tensor* a) {
-    Tensor* new_tensor = tensor(cos(a->value));
-    new_tensor->creation_operation = "cos";
-    new_tensor->parents[0] = a;
-
-    return new_tensor;
+    return unaryOperations(a, "cos");
 }
 
 Tensor* Log (Tensor* a) {
-    Tensor* new_tensor = tensor(log(a->value));
-    new_tensor->creation_operation = "log";
-    new_tensor->parents[0] = a;
-
-    return new_tensor;
+    return unaryOperations(a, "log");
 }
 
 Tensor* Power (Tensor* a, double power) {
