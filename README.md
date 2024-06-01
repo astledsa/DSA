@@ -17,3 +17,6 @@
 
 **Structure**: Tensors <br>
 **Resource:** [Blog](https://okarthikb.github.io/blog/rmad.html)
+
+**Structure**: Binary Tree <br>
+**Resource:** [Wikipedia](https://en.wikipedia.org/wiki/Binary_tree)
