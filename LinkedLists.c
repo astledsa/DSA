@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-typedef struct Node{
-    int value;
-    struct Node* next;
-}Node;
+#include "headers/LinkedLists.h"
 
 Node* initialise (int number) {
     Node* node = (Node*)malloc(sizeof(Node));
@@ -62,7 +58,13 @@ void pop (Node* LL) {
     current->next = NULL;
 }
 
-int main () {
-    Node* ll = initialise(12);
+int getidx (Node* current, int number) {
+    int idx = 0;
+    int* num = NULL;
+    while (idx <= number && current->next != NULL) {
+        num = &current->value;
+        current = current->next;
+    }
+    return *num;
 }
 
